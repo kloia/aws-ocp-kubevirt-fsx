@@ -32,6 +32,7 @@ spec:
         kubevirt.io/size: small
     spec:
       architecture: amd64
+      evictionStrategy: LiveMigrate
       domain:
         cpu:
           cores: 1
@@ -50,8 +51,6 @@ spec:
               masquerade: {}
             - name: secondary 
               bridge: {}
-        machine:
-          type: pc-q35-rhel9.2.0
         memory:
           guest: 2Gi
       networks:
@@ -107,6 +106,7 @@ spec:
         kubevirt.io/size: small
     spec:
       architecture: amd64
+      evictionStrategy: LiveMigrate
       domain:
         cpu:
           cores: 1
@@ -125,8 +125,6 @@ spec:
               masquerade: {}
             - name: secondary 
               bridge: {}
-        machine:
-          type: pc-q35-rhel9.2.0
         memory:
           guest: 2Gi
       networks:
