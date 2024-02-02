@@ -255,10 +255,140 @@ This command will create two VMs with two interfaces but since we don't have a D
 ### Assign IP address for the secondary network interface
 
 ```bash
-# VM A
-oc exec virt-launcher-rhel9-dual-nic-a-vwx6j -- ip a add 192.168.1.10/24 dev eth1
+$ oc get vm -n vm-test
+NAME               AGE    STATUS    READY
+rhel9-dual-nic-a   119m   Running   True
+rhel9-dual-nic-b   119m   Running   True
+# Assign IP for VM A
+
+$ virtctl console -n vm-test rhel9-dual-nic-a
+Successfully connected to rhel9-dual-nic-a console. The escape sequence is ^]
+
+rhel9-dual-nic-a login: cloud-user
+Password:
+Last login: Thu Feb  1 12:24:15 on tty1
+[cloud-user@rhel9-dual-nic-a ~]$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 8901 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:12 brd ff:ff:ff:ff:ff:ff
+    altname enp1s0
+    inet 10.0.2.2/24 brd 10.0.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 86306478sec preferred_lft 86306478sec
+    inet6 fe80::a6:a2ff:fe00:12/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1300 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:13 brd ff:ff:ff:ff:ff:ff
+    altname enp2s0
+
+[cloud-user@rhel9-dual-nic-a ~]$ sudo ip a add 192.168.1.10/24 dev eth1
+[cloud-user@rhel9-dual-nic-a ~]$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 8901 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:12 brd ff:ff:ff:ff:ff:ff
+    altname enp1s0
+    inet 10.0.2.2/24 brd 10.0.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 86306385sec preferred_lft 86306385sec
+    inet6 fe80::a6:a2ff:fe00:12/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1300 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:13 brd ff:ff:ff:ff:ff:ff
+    altname enp2s0
+    inet 192.168.1.10/24 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::16b6:cf73:eb06:e689/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+
 # VM B
-oc exec virt-launcher-rhel9-dual-nic-b-dsk1a -- ip a add 192.168.1.11/24 dev eth1
+$ virtctl console -n vm-test rhel9-dual-nic-b
+Successfully connected to rhel9-dual-nic-b console. The escape sequence is ^]
+
+rhel9-dual-nic-b login: cloud-user
+Password:
+[cloud-user@rhel9-dual-nic-b ~]$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 8901 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:14 brd ff:ff:ff:ff:ff:ff
+    altname enp1s0
+    inet 10.0.2.2/24 brd 10.0.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 86306229sec preferred_lft 86306229sec
+    inet6 fe80::a6:a2ff:fe00:14/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1300 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:15 brd ff:ff:ff:ff:ff:ff
+    altname enp2s0
+    inet6 fe80::5d9a:f417:8506:4554/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+[cloud-user@rhel9-dual-nic-b ~]$ sudo ip a add 192.168.1.11/24 dev eth1
+[cloud-user@rhel9-dual-nic-b ~]$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 8901 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:14 brd ff:ff:ff:ff:ff:ff
+    altname enp1s0
+    inet 10.0.2.2/24 brd 10.0.2.255 scope global dynamic noprefixroute eth0
+       valid_lft 86306205sec preferred_lft 86306205sec
+    inet6 fe80::a6:a2ff:fe00:14/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1300 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:a6:a2:00:00:15 brd ff:ff:ff:ff:ff:ff
+    altname enp2s0
+    inet 192.168.1.11/24 scope global eth1
+       valid_lft forever preferred_lft forever
 ```
 
+After these steps you can see that we have an IPv4 address on the eth1 interface in both VMs. Normally we could do this automatically with the help of a DHCP server, but in this example we have manually assigned IP addresses. Now we will test the communication between these VMs.
+
 ### Connectivity test
+
+```bash
+[cloud-user@rhel9-dual-nic-a ~]$ ip a | grep '192'
+    inet 192.168.1.10/24 scope global eth1
+[cloud-user@rhel9-dual-nic-a ~]$ ping 192.168.1.11
+PING 192.168.1.11 (192.168.1.11) 56(84) bytes of data.
+64 bytes from 192.168.1.11: icmp_seq=1 ttl=64 time=0.873 ms
+64 bytes from 192.168.1.11: icmp_seq=2 ttl=64 time=0.405 ms
+64 bytes from 192.168.1.11: icmp_seq=3 ttl=64 time=0.524 ms
+64 bytes from 192.168.1.11: icmp_seq=4 ttl=64 time=0.207 ms
+64 bytes from 192.168.1.11: icmp_seq=5 ttl=64 time=0.487 ms
+64 bytes from 192.168.1.11: icmp_seq=6 ttl=64 time=0.387 ms
+
+--- 192.168.1.11 ping statistics ---
+6 packets transmitted, 6 received, 0% packet loss, time 5095ms
+rtt min/avg/max/mdev = 0.207/0.480/0.873/0.202 ms
+
+[cloud-user@rhel9-dual-nic-b ~]$ ip a | grep '192'
+    inet 192.168.1.11/24 scope global eth1
+[cloud-user@rhel9-dual-nic-b ~]$ ping 192.168.1.10
+PING 192.168.1.10 (192.168.1.10) 56(84) bytes of data.
+64 bytes from 192.168.1.10: icmp_seq=1 ttl=64 time=1.47 ms
+64 bytes from 192.168.1.10: icmp_seq=2 ttl=64 time=0.561 ms
+64 bytes from 192.168.1.10: icmp_seq=3 ttl=64 time=0.315 ms
+64 bytes from 192.168.1.10: icmp_seq=4 ttl=64 time=0.443 ms
+64 bytes from 192.168.1.10: icmp_seq=5 ttl=64 time=0.486 ms
+64 bytes from 192.168.1.10: icmp_seq=6 ttl=64 time=0.549 ms
+
+--- 192.168.1.10 ping statistics ---
+6 packets transmitted, 6 received, 0% packet loss, time 5042ms
+rtt min/avg/max/mdev = 0.315/0.636/1.465/0.379 ms
+```
+
+As you can see from the output, each VM can communicate over the secondary network interface. And that means if VM A is evicted with LiveMigration strategy, the IP address on the secondary network interfaces will still be same and the VM B can communicate the VM A while its migrating to other node.
